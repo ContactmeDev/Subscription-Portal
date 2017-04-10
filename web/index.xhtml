@@ -1,0 +1,110 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:f="http://java.sun.com/jsf/core"
+
+      xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        
+<h:head>
+<title> خدمات كونتاكت مي </title>
+<ui:define name="metadata">
+<f:metadata>
+    <f:viewParam name="source" value="#{sgbean.source}"/>
+    <f:viewParam name="service" value="#{sgbean.service}"/>
+   <f:viewParam name="subservice" value="#{sgbean.subservice}"/>
+</f:metadata>
+    </ui:define>
+<style type="text/css">
+body {
+text-align : right;
+ background-color:  #e0f2f1;
+color: #5a5656;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+font-size: 16px;
+line-height: 1em;
+font-weight: bold;
+ }
+#login {
+margin: 10px auto ;
+width: 300px;
+}
+form fieldset input[type="text"] {
+background-color:#e5e5e5;
+border: none;
+border-radius: 3px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 3px;
+color: #5a5656;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+font-size: 14px;
+height: 50px;
+outline: none;
+padding: 0px 10px;
+width: 300px;
+-webkit-appearance:none;
+font-weight: bold;
+}
+form fieldset input[type="submit"]{
+background-color: MediumTurquoise;
+border:none ;
+border-radius: 3px;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+color: #f4f4f4;
+cursor: pointer;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+height: 50px;
+text-transform: uppercase;
+width: 100px;
+-webkit-appearance:none;
+font-weight: bold;
+}
+#p_messageid{
+color:red ;
+font-family: sans-serif ;
+text-shadow: 1px 1px 8px black;
+background-color:#ffffff;
+font-size: 3;
+}
+#h2{
+color:MediumTurquoise;
+}
+</style>
+</h:head>
+<h:body>
+<br /> 
+     <h2 id ="h2">
+         <h:outputFormat value="مرحبا بك في خدمة ... {0}...للاشتراك في هذه الخدمه الرجاء ادخال البيانات التاليه">
+         <f:param value="#{sgbean.serviceName}" />
+        </h:outputFormat>
+    </h2>
+<h:form id ="login">
+<fieldset>
+         
+         <h:inputHidden id ="source" required="false"  value = "#{sgbean.source}" /><br/>
+         <h:inputHidden id ="service" required="false"  value = "#{sgbean.service}"/><br/>
+         <h:inputHidden id ="subservice" required="false" value = "#{sgbean.subservice}"/><br/>
+         <h:outputLabel for="Username" value ="الاسم"/> <p:inputText id ="username" required="false" requiredMessage="username is requierd!"  value = "#{sgbean.username}"/><br/>
+         <h:outputLabel for="Email" value ="البريد  الالكتروني"/> <p:inputText id ="email" required="false" requiredMessage="username is requierd!" value = "#{sgbean.email}"/><br/>
+         <h:outputLabel for="Number" value ="* رقم الهاتف"/> <p:inputText maxlength="10"  id="number"   size="10" value = "#{sgbean.number}"    required = "true" requiredMessage="الرجاء ادخال رقم الهاتف"   disabled="#{sgbean.number}"  validator="#{sgbean.validateMobileNo}"  validatorMessage="عفوا...عليك ان تكون من مشتركي زين"> <f:validateRegex pattern="^(09|01)[a-zA-Z0-9]{8}$"/>
+         <h:message for="number" id="value"/>
+         </p:inputText>
+         <p:message for="number" id="p_messageid" />
+         <p>
+         <p:spacer height="5" />
+         </p>
+         <h:commandButton value="ارسال" action="#{sgbean.add}" ></h:commandButton>
+        
+</fieldset>
+</h:form>
+      <p>
+      <p:spacer height="15" />
+      </p>
+</h:body>
+        </f:view>
+</html>
+

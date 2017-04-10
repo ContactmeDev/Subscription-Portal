@@ -1,0 +1,71 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"  
+      xmlns:f="http://java.sun.com/jsf/core"  
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+<title>ط®ط¯ظ…ط§طھظ†ط§ </title>
+<style type="text/css">
+body {
+text-align : right;
+background-color: #e0f2f1;
+color: #5a5656;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+font-size: 16px;
+line-height: 1em;
+font-weight: bold;
+ }
+#login {
+margin: 10px auto ;
+width: 300px;
+}
+form fieldset input[type="submit"]{
+background-color:  #4caf50;
+border: none;
+border-radius: 3px;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+color: #f4f4f4;
+cursor: pointer;
+font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+height: 50px;
+text-transform: uppercase;
+width: 100px;
+-webkit-appearance:none;
+font-weight: bold;
+}
+.oddColumn {
+height: 25px;
+text-align: center;
+background: MediumTurquoise;
+}
+.evenColumn {
+text-align: center;
+background: PowderBlue;
+}
+#h2{
+   color:MediumTurquoise;
+}
+</style>
+</h:head>
+<h:body>
+         <h2 id ="h2">ظٹظ…ظƒظ†ظƒ ط§ظ„ط§ط´طھط±ط§ظƒ ط§ظٹط¶ط§ ظپظٹ ط¨ط§ظ‚ظٹ ط®ط¯ظ…ط§طھظ†ط§</h2>
+<h:form id ="login">  
+<fieldset>
+          <h:dataTable value="#{tableBean.addService}" var="d"
+          styleClass="" columnClasses="oddColumn,evenColumn">
+  <h:column>
+           #{d.SubService}
+          </h:column>
+             
+          
+          </h:dataTable> 
+          <p>
+          <p:spacer height="5" />
+          </p>
+          <h:commandButton value="ط§ط±ط³ط§ظ„" action="#{tablBean.addAll}" /> </fieldset>
+</h:form> 		
+</h:body>
+</html> 
+   
