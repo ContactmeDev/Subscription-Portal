@@ -1,293 +1,226 @@
-package com.cme;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+package com.cme.bean;
+
+import com.cme.ejb.SubscriptionPortalFacade;
+import com.cme.ejb.SubserviceMastFacade;
+import com.cme.entity.SubscriptionPortal;
+import com.cme.entity.SubscriptionPortalPK;
+import com.cme.entity.SubserviceMast;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.faces.bean.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
-import javax.faces.context.FacesContext;
-import javax.sql.rowset.CachedRowSet;
-import org.primefaces.context.RequestContext;
+import javax.inject.Named;
+import javax.validation.constraints.Size;
 
-@ManagedBean(name="sgbean")
-
+/**
+ *
+ * @author hp
+ */
+@Named
 @SessionScoped
 
-public class User 
-{
-RequestContext context = RequestContext.getCurrentInstance();
-FacesMessage message = null;
-PreparedStatement ps =null;
-Connection con= null;
-int i =0;
-private String source;
-private String service;
-private String subservice;
-private String email;
-private String number;
-private String username;
-private Boolean cource1;
-private String[] srv;
-  private String serviceSelected;
-private Map<String,Boolean> checkMap = new HashMap<String,Boolean>();
-
-public Map<String, Boolean> getCheckMap() {
-        return checkMap;
-  }
-
-public void addService(String service, String subService)
-{
+public class User {
+    
+    private String status;
+    private String name;
+    private String email;
+    @Size(max=10)
+    private String mobileNo;
+    private String service;
+    private String subService;
+    private String source;
+    private SubscriptionPortal subscriber;
+    private SubscriptionPortalPK subPK;
+    @EJB 
+    private SubscriptionPortalFacade subSession;
+    @EJB
+    private SubserviceMastFacade subserviceSession;
+    List<SubscriberList> subList = new ArrayList<SubscriberList>();
     
     
-}
 
-public void setCource1( Boolean cource1)
-{
-   this.cource1 = cource1;
-}
-
-public Boolean getCource1()
-{
-    return cource1;
-}
-
-
-public String parametersAction(){
-        FacesContext fc = FacesContext.getCurrentInstance();
-        Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
-        source = params.get("source");
-        service = params.get(" service ");
-        subservice= params.get("subservice");
-        return "result";
+    /**
+     * Creates a new instance of SubscriberBean
+     */
+    public User() {
     }
 
-public String getSource()   
-{
-    return source;  
-}
-public void setSource( String source)
-{
-   this.source = source;
-}
-public String getService()
-{
-    return service;
-}
-public void setService ( String service)
-{
-   this.service = service;
-}
+    public String getStatus() {
+        return status;
+    }
 
-public String getSubservice()
-{
-    return subservice;
-}
-public void setSubservice( String subservice)
-{
-   this.subservice = subservice;
-}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-public String getEmail()
-{
-    return email;
-}
-public void setEmail( String  email)
-{
-   this. email =  email;
-}
+    public String getName() {
+        return name;
+    }
 
-public String getNumber()
-{
-    return number;
-}
-public void setNumber( String  number)
-{
-   this. number =  number;
-}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-public String getUsername()
-{
-    return username;
-}
-public void setUsername( String  username)
-{
-   this. username =  username;
-}
+    public String getEmail() {
+        return email;
+    }
 
-public void validateMobileNo(FacesContext context, UIComponent comp,
-			Object value) {
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-		System.out.println("inside validate method");
-		String number= (String) value;
-                if (number.length() < 10) {
-	        ((UIInput) comp).setValid(false);
-                FacesMessage message = new FacesMessage(
-		"اقل طول للرقم هو 10 ارقام");
-		context.addMessage(comp.getClientId(context), message);}
-	                                  }
-public String add(){ 
-String retValue = "output";
-     try
-     {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        con = DriverManager.getConnection("jdbc:oracle:thin:@209.126.76.237:1521:CME" , "CPSPROD" ,"CPS4CME");
+    public String getMobileNo() {
+        return mobileNo;
+    }
 
-        Statement  stmt = con.createStatement();
-     
-         boolean numberExists = false;
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
 
-         PreparedStatement st = con.prepareStatement(" SELECT * FROM SUBSCRIPTION_PORTAL WHERE PHONE_NUMBER =?");
-           st.setString(1,number);
-         ResultSet r1=st.executeQuery();
-         String numberCounter;
-         if(r1.next()) 
-          {
-           numberCounter =  r1.getString("PHONE_NUMBER");
-           if (numberCounter.equals(number))
-           {
-              FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("عفوا...  انت مشترك مسبقا في هذه الخدمة"));
-              numberExists = true;
-           }
-          }  
-         if (!numberExists) {
+    public String getService() {
+        return service;
+    }
 
-           String sql = "INSERT INTO SUBSCRIPTION_PORTAL(SOURCE, NAME, E_MAIL, PHONE_NUMBER,SERVICE_ID , SUBSERVICE_ID)VALUES(?,?,?,?,?,?)";
-           ps=con.prepareStatement(sql);
-            ps.setString(2,username);
-            ps.setString(1,source);
-            ps.setString(5,service);
-            ps.setString(6,subservice);
-            ps.setString(4,number);
-            ps.setString(3,email);
-//            ps.setBoolean(5,cource1);
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getSubService() {
+        return subService;
+    }
+
+    public void setSubService(String subService) {
+        this.subService = subService;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
     
-            i=ps.executeUpdate()     ;
-        }
-     
-      }
-     catch (Exception e)
-                {
-             e.printStackTrace();}
     
-      finally{
-                try{
-                con.close();
-                }
+    
+    public List<SubscriptionPortal> getSubscribers(){
+        return subSession.getSubscriberByStatus(status);
+    }
+    
+    
+    public List<SubscriptionPortal> getAll(){
+        return subSession.findAll();
+    }
+    
+    public String saveEntity(){
+        subscriber = new SubscriptionPortal();
+        subPK = new SubscriptionPortalPK();
         
-                   catch(Exception e)
-                {
-             e.printStackTrace();              }
-                }
-   return retValue;
- 
-}
-
-
+        subPK.setPhoneNumber(mobileNo);
+        subPK.setServiceId(service);
+        subPK.setSubserviceId(subService);
+        subscriber.setSubscriptionPortalPK(subPK);
+        subscriber.setEMail(email);
+        subscriber.setName(name);
+        subscriber.setSource(source);
+        subscriber.setStatus("N");
+        
+        subSession.create(subscriber);
+        return "output";
+        
+    }
     
-public String getServiceName() {
-        String srvName = "";
-        try
-        {
-           Class.forName("oracle.jdbc.driver.OracleDriver");
-           con = DriverManager.getConnection("jdbc:oracle:thin:@209.126.76.237:1521:CME" , "CPSPROD" ,"CPS4CME");
-           Statement  stmt = con.createStatement();
-          
+    public SubscriptionPortal getNewSubscriber(){
+        return subscriber;
+    }
+    
+    public List<SubscriberList> getPortalServices(){
+       List<SubserviceMast> subServicesList =  subserviceSession.getPortalServices(subService);
        
-           PreparedStatement st = con.prepareStatement(" SELECT * FROM SUBSERVICE_MAST WHERE SSRV_CODE =? AND SSRV_SRV_CODE =?");
-            st.setString(1,subservice);
-            st.setString(2,service);
-            
-            ResultSet r1=st.executeQuery();
-
-            if(r1.next()) 
-            {
-                srvName = r1.getString("SSRV_NAME_AR");
-            }
-         }catch(Exception ex)
-         {
-             System.err.println(ex.getMessage());
-         }
-         finally{
-                try{
-                con.close();
-                
-                }
-        
-                   catch(Exception e)
-                {
-             e.printStackTrace();              }
-                }
-        
-        if(srvName.equals(""))
-            srvName = "الخدمة غير موجودة";
-        
-        return srvName;
-        
-    }
-   
-    
-
-public   ResultSet getAll() {
-  // String re = "output";
-  CachedRowSet crs = null;
-  ResultSet result = null;
-  PreparedStatement st = null;
-        try
-        {
-          Class.forName("oracle.jdbc.driver.OracleDriver");
-          con = DriverManager.getConnection("jdbc:oracle:thin:@209.126.76.237:1521:CME" , "CPSPROD" ,"CPS4CME");
-          Statement stmt;
-          stmt = con.createStatement();
-          st = con.prepareStatement(" SELECT * FROM SUBSERVICE_MAST  WHERE SSRV_CODE <> ? AND SSRV_SCAT_CODE='1003'");
-          st.setString(1, subservice);
-          
-          System.out.println("************************: "+subservice);
-          result = st.executeQuery();
-          crs = new com.sun.rowset.CachedRowSetImpl();
-          crs.populate(result);
+       
+       SubscriptionPortal   subPortal;
+       SubscriptionPortalPK subPK;
+       subList.clear();
+       for(SubserviceMast ssMast: subServicesList){
+           subPortal = new SubscriptionPortal();
+           subPK = new SubscriptionPortalPK();
            
-         }
-       
-        catch(Exception e)
-         {
-          System.out.println(e);
-         }
-        finally{
-                try{
-                    con.close();
-                    
-                   }
+           subPK.setServiceId(ssMast.getSsrvSrvCode().getSrvCode());
+           subPK.setSubserviceId(ssMast.getSsrvCode());
+           subPK.setPhoneNumber(mobileNo);
+           
+           subPortal.setSubscriptionPortalPK(subPK);
+           subPortal.setEMail(email);
+           subPortal.setName(name);
+           subPortal.setSource(source);
+           subPortal.setStatus("N");
+           
+           
+           subList.add(new SubscriberList(subPK,subPortal,false));
+       }
+       return subList;
+    } 
+    
+    public String saveAdditionalServices(){
+        for(SubscriberList portal: subList){
+            if (portal.isCheck()){
+                subSession.create(portal.getSubEntity());
+            }
+        }
+        return "subscriber";
+    }
+    
+    public String getArabicServiceName(String ssrv){
+        return subserviceSession.getServiceNameArabic(ssrv);
+    }
+    
+    public static class SubscriberList {
+        private SubscriptionPortal subEntity;
+        private SubscriptionPortalPK subPK;
+        private boolean check;
+        private boolean edit;
         
-                catch(Exception e){
-                     e.printStackTrace(); 
-                    }
-                }
-        return crs;
- 
-                          }
+        public SubscriberList(){
+            
+        }
+        public SubscriberList(SubscriptionPortalPK pk,SubscriptionPortal portal, boolean sub){
+            subEntity = portal;
+            subEntity.setSubscriptionPortalPK(pk);
+            check = sub;
+        }
 
-//public String getSelected() {
-//    
-//	String result = "";
-//	for (Entry<String,Boolean> entry : checkMap.entrySet()) {
-//		if (entry.getValue()) {
-//			result = result + ", "+entry.getKey();
-//		}
-//	}
-//	return result;
-//}
+        public SubscriptionPortal getSubEntity() {
+            return subEntity;
+        }
 
-          
+        public void setSubEntity(SubscriptionPortal subEntity) {
+            this.subEntity = subEntity;
+        }
 
+        public boolean isCheck() {
+            return check;
+        }
+
+        public void setCheck(boolean check) {
+            this.check = check;
+        }
+
+        public SubscriptionPortalPK getSubPK() {
+            return subPK;
+        }
+
+        public void setSubPK(SubscriptionPortalPK subPK) {
+            this.subPK = subPK;
+        }
+        
+        
+        
+        
+    } 
 }
